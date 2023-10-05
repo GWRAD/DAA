@@ -1,0 +1,46 @@
+import heapq
+import time
+
+def create_huffman_tree(total_symbol):
+  # Initialize heap which contains weight and symbol with empty string
+  # weight represents frequency of symbol and [symbol,""] respresents list with symbol and empty string which wll contain Huffman code for symbol
+
+  heap = [[weight, [symbol, ""]] for symbol, weight in total_symbol.items()]
+  heapq.heapify(heap) #converts into min heap
+
+  while len(heap) > 1:
+    low = heapq.heappop(heap)   #lowest element
+    high = heapq.heappop(heap)  #second lowest element
+    for pair in low[1:]:
+      pair[1] = '0' + pair[1]
+    for pair in high[1:]:
+      pair[1] = '1' + pair[1]
+    heapq.heappush(heap, [low[0] + high[0]] + low[1:] + high[1:])
+
+  return sorted(heapq.heappop(heap)[1:], key=lambda p: (len(p[-1]), p)) #sorts these codes based on their lengths
+
+
+# Main program
+if __name__ == "__main__":
+  total_symbol = {}
+  n = int(input("Enter the number of symbols: "))  # Taking input of total number of symbols user wants to encode
+
+  for i in range(n):
+    symbol = input(f"Enter symbol {i + 1}: ")
+    frequency = int(input(f"Enter frequency for {symbol}: "))
+    total_symbol[symbol] = frequency
+
+  start_time = time.time_ns()  # measures the start time in nanoseconds
+  huffman_tree = create_huffman_tree(total_symbol)  # calls function for creation of huffman tree
+  end_time = time.time_ns()  # measures the end time in nanoseconds
+
+  execution_time = end_time - start_time
+
+  print("\nHuffman Codes:")
+  for symbol, code in huffman_tree:
+    print(f"Symbol: {symbol}, Code: {code}")  # print output
+
+  print(f"\nExecution Time: {execution_time} nano seconds")  # print total execution time
+  
+
+
